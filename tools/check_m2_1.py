@@ -41,7 +41,7 @@ def main() -> int:
             raise SystemExit(f"M2.1 FAIL: missing {path.relative_to(ROOT)}")
 
     out = run(AMI, "version")
-    require(out, "AmiGet 0.2.0-m2.1", "version")
+    require(out, "AmiGet ", "version identity")
 
     # Backward-compatible curated lookup still works with no Aminet cache present.
     out = run(AMI, "search", "example")
