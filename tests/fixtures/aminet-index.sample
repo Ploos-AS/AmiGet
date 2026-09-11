@@ -1,0 +1,6 @@
+# Representative fixed-column/whitespace Aminet INDEX sample used for parser qualification.
+# name directory size age description
+amiget.lha util/cli 34K 2+ Search for & download files from aminet
+lha_68k.lha util/arc 86K 7+ LhA archiver for classic Amiga systems
+RoadshowDemo.lha comm/tcp 1M 3+ TCP/IP stack demo package
+AmiSSL-5.19.lha util/libs 4M 1+ SSL TLS libraries for AmigaOS
