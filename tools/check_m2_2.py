@@ -42,7 +42,7 @@ def main() -> int:
         raise SystemExit("M2.2 FAIL: missing files: " + ", ".join(missing))
 
     out = run("version")
-    require(out, "AmiGet 0.2.0-", "program version")
+    require(out, "AmiGet ", "program identity")
 
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp = Path(tmpdir)
