@@ -35,7 +35,7 @@ static int contains_ci(const char *text, const char *needle)
     return 0;
 }
 
-static int field_is_number_with_optional_suffix(const char *value)
+static int valid_size_field(const char *value)
 {
     const unsigned char *p = (const unsigned char *)value;
 
@@ -45,10 +45,21 @@ static int field_is_number_with_optional_suffix(const char *value)
         p++;
     if (*p == '\0')
         return 1;
-    if ((p[0] == 'K' || p[0] == 'k' || p[0] == 'M' || p[0] == 'm' ||
-         p[0] == 'G' || p[0] == 'g') && p[1] == '\0')
+    return (p[0] == 'K' || p[0] == 'k' || p[0] == 'M' || p[0] == 'm' ||
+            p[0] == 'G' || p[0] == 'g') && p[1] == '\0';
+}
+
+static int valid_age_field(const char *value)
+{
+    const unsigned char *p = (const unsigned char *)value;
+
+    if (p == NULL || !isdigit(*p))
+        return 0;
+    while (isdigit(*p))
+        p++;
+    if (*p == '\0')
         return 1;
-    return 0;
+    return p[0] == '+' && p[1] == '\0';
 }
 
 int aminet_parse_index_line(const char *line, AminetIndexEntry *entry)
@@ -81,9 +92,9 @@ int aminet_parse_index_line(const char *line, AminetIndexEntry *entry)
         return 0;
     if (strchr(entry->directory, '/') == NULL)
         return 0;
-    if (!field_is_number_with_optional_suffix(entry->size))
+    if (!valid_size_field(entry->size))
         return 0;
-    if (!field_is_number_with_optional_suffix(entry->age))
+    if (!valid_age_field(entry->age))
         return 0;
 
     return 1;
