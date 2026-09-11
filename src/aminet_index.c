@@ -107,14 +107,17 @@ int aminet_build_cache(const char *index_path, const char *cache_path)
             if (!write_cache_entry(out, &entry)) {
                 fclose(in);
                 fclose(out);
+                remove(cache_path);
                 return 1;
             }
             accepted++;
         }
     }
 
-    if (ferror(in) || fclose(in) != 0 || fclose(out) != 0)
+    if (ferror(in) || fclose(in) != 0 || fclose(out) != 0) {
+        remove(cache_path);
         return 1;
+    }
 
     if (accepted == 0) {
         remove(cache_path);
@@ -123,6 +126,44 @@ int aminet_build_cache(const char *index_path, const char *cache_path)
     }
 
     printf("AmiGet: indexed %lu Aminet entries\n", accepted);
+    return 0;
+}
+
+int aminet_update_cache_atomic(const char *index_path, const char *cache_path)
+{
+    char temp_path[1024];
+    size_t cache_len;
+    int rc;
+
+    if (index_path == NULL || cache_path == NULL)
+        return 1;
+
+    cache_len = strlen(cache_path);
+    if (cache_len + 5 >= sizeof(temp_path)) {
+        fprintf(stderr, "AmiGet: cache path too long\n");
+        return 1;
+    }
+
+    strcpy(temp_path, cache_path);
+    strcat(temp_path, ".new");
+    remove(temp_path);
+
+    rc = aminet_build_cache(index_path, temp_path);
+    if (rc != 0) {
+        remove(temp_path);
+        return rc;
+    }
+
+    if (rename(temp_path, cache_path) != 0) {
+        /* Some C libraries/targets do not replace an existing file. Keep the
+         * existing cache untouched rather than deleting it implicitly. */
+        fprintf(stderr,
+                "AmiGet: cannot replace cache atomically: %s (temporary cache kept at %s)\n",
+                cache_path, temp_path);
+        return 1;
+    }
+
+    printf("AmiGet: cache updated: %s\n", cache_path);
     return 0;
 }
 
