@@ -19,6 +19,7 @@ typedef struct AminetIndexEntry {
 
 int aminet_parse_index_line(const char *line, AminetIndexEntry *entry);
 int aminet_build_cache(const char *index_path, const char *cache_path);
+int aminet_update_cache_atomic(const char *index_path, const char *cache_path);
 int aminet_search_cache(const char *cache_path, const char *term);
 
 #endif
