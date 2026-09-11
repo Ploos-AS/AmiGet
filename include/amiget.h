@@ -1,7 +1,7 @@
 #ifndef AMIGET_H
 #define AMIGET_H
 
-#define AMIGET_VERSION "0.1.0-m1"
+#define AMIGET_VERSION "0.2.0-m2.1"
 #define AMIGET_MAX_LINE 512
 #define AMIGET_MAX_FIELD 256
 #define AMIGET_MAX_PATH 512
@@ -23,6 +23,8 @@ typedef struct AmiGetPackage {
 int amiget_load_package(const char *path, AmiGetPackage *pkg);
 int amiget_list(const char *catalogue_path);
 int amiget_search(const char *catalogue_path, const char *term);
+int amiget_search_combined(const char *catalogue_path, const char *cache_path,
+                           const char *term, int cache_required);
 int amiget_info(const char *catalogue_path, const char *name);
 
 #endif
