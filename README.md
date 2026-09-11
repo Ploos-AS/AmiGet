@@ -17,27 +17,49 @@ The long-term goal is to make it simple to discover, download, verify and instal
 - Prefer transparent, inspectable package metadata over opaque installers.
 - Add ARexx integration where it is useful and technically appropriate.
 
-## Planned command model
+## Current M1 command model
 
-The exact CLI is not frozen yet, but the intended user experience is:
+M1 implements an offline local catalogue only:
 
 ```text
-AmiGet update
-AmiGet search <term>
-AmiGet info <package>
-AmiGet install <package>
-AmiGet remove <package>
-AmiGet upgrade
-AmiGet doctor
-AmiGet profile install <profile>
+AmiGet version
+AmiGet list [catalogue]
+AmiGet search <term> [catalogue]
+AmiGet info <package> [catalogue]
 ```
+
+The default catalogue is `packages/catalogue.lst`. M1 does **not** perform network access, downloads or installation.
+
+## Build and qualification
+
+Host build:
+
+```sh
+make clean
+make
+```
+
+Run the repository gates:
+
+```sh
+make check
+```
+
+Expected result includes:
+
+```text
+M0 PASS
+M1 PASS
+```
+
+GitHub Actions runs the same `make check` gate on pushes and pull requests.
 
 ## Repository layout
 
 ```text
 src/                 Amiga client source code
 include/             Public/internal headers
-packages/            AmiGet package metadata
+packages/            AmiGet package metadata and local catalogue
 profiles/            Curated package profiles
 docs/                Design and milestone documentation
 tools/               Host-side validation/development tools
@@ -46,7 +68,7 @@ tools/               Host-side validation/development tools
 ## Milestones
 
 - **M0 — Foundation:** repository structure, scope, metadata format draft and validation gate.
-- **M1 — Local catalogue:** parse local package metadata; implement list/search/info without networking or installation.
+- **M1 — Local catalogue:** native client parses local package metadata and implements version/list/search/info without networking or installation.
 - **M2 — Aminet index:** fetch/update catalogue data and map packages to upstream Aminet artifacts.
 - **M3 — Download + verification:** retrieve archives safely and verify integrity.
 - **M4 — Install engine:** unpack and install packages with explicit recipes and dry-run support.
@@ -57,22 +79,6 @@ tools/               Host-side validation/development tools
 - **M9 — Release qualification:** classic-hardware/emulator qualification and release packaging.
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) for details.
-
-## M0 status
-
-M0 defines the project contract and repository baseline. It intentionally does **not** download or install software yet.
-
-Run the host-side gate with:
-
-```sh
-python3 tools/check_m0.py
-```
-
-Expected result:
-
-```text
-M0 PASS
-```
 
 ## License
 
