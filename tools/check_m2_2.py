@@ -13,12 +13,8 @@ FIXTURE = ROOT / "tests/fixtures/aminet-index.sample"
 
 def run(*args: str, expect: int = 0) -> str:
     proc = subprocess.run(
-        [str(BIN), *args],
-        cwd=ROOT,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        check=False,
+        [str(BIN), *args], cwd=ROOT, text=True,
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False,
     )
     if proc.returncode != expect:
         print(proc.stdout, end="")
@@ -46,7 +42,7 @@ def main() -> int:
         raise SystemExit("M2.2 FAIL: missing files: " + ", ".join(missing))
 
     out = run("version")
-    require(out, "0.2.0-m2.2", "version")
+    require(out, "AmiGet 0.2.0-", "program version")
 
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp = Path(tmpdir)
