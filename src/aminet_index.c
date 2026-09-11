@@ -35,6 +35,22 @@ static int contains_ci(const char *text, const char *needle)
     return 0;
 }
 
+static int field_is_number_with_optional_suffix(const char *value)
+{
+    const unsigned char *p = (const unsigned char *)value;
+
+    if (p == NULL || !isdigit(*p))
+        return 0;
+    while (isdigit(*p))
+        p++;
+    if (*p == '\0')
+        return 1;
+    if ((p[0] == 'K' || p[0] == 'k' || p[0] == 'M' || p[0] == 'm' ||
+         p[0] == 'G' || p[0] == 'g') && p[1] == '\0')
+        return 1;
+    return 0;
+}
+
 int aminet_parse_index_line(const char *line, AminetIndexEntry *entry)
 {
     int fields;
@@ -62,6 +78,12 @@ int aminet_parse_index_line(const char *line, AminetIndexEntry *entry)
         return 0;
 
     if (strchr(entry->name, '/') != NULL || strchr(entry->directory, ':') != NULL)
+        return 0;
+    if (strchr(entry->directory, '/') == NULL)
+        return 0;
+    if (!field_is_number_with_optional_suffix(entry->size))
+        return 0;
+    if (!field_is_number_with_optional_suffix(entry->age))
         return 0;
 
     return 1;
@@ -155,8 +177,6 @@ int aminet_update_cache_atomic(const char *index_path, const char *cache_path)
     }
 
     if (rename(temp_path, cache_path) != 0) {
-        /* Some C libraries/targets do not replace an existing file. Keep the
-         * existing cache untouched rather than deleting it implicitly. */
         fprintf(stderr,
                 "AmiGet: cannot replace cache atomically: %s (temporary cache kept at %s)\n",
                 cache_path, temp_path);
