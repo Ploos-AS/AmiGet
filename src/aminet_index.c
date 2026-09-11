@@ -35,6 +35,19 @@ static int contains_ci(const char *text, const char *needle)
     return 0;
 }
 
+static int equals_ci(const char *a, const char *b)
+{
+    if (a == NULL || b == NULL)
+        return 0;
+    while (*a != '\0' && *b != '\0') {
+        if (tolower((unsigned char)*a) != tolower((unsigned char)*b))
+            return 0;
+        a++;
+        b++;
+    }
+    return *a == '\0' && *b == '\0';
+}
+
 static int valid_size_field(const char *value)
 {
     const unsigned char *p = (const unsigned char *)value;
@@ -268,4 +281,56 @@ int aminet_search_cache(const char *cache_path, const char *term)
 
     fclose(fp);
     return matches > 0 ? 0 : 2;
+}
+
+int aminet_lookup_cache(const char *cache_path, const char *name,
+                        AminetIndexEntry *entry)
+{
+    FILE *fp;
+    char line[1024];
+
+    if (cache_path == NULL || name == NULL || entry == NULL)
+        return 1;
+
+    fp = fopen(cache_path, "r");
+    if (fp == NULL) {
+        fprintf(stderr, "AmiGet: cannot open Aminet cache: %s\n", cache_path);
+        return 1;
+    }
+
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        AminetIndexEntry current;
+        memset(&current, 0, sizeof(current));
+        if (!split_cache_line(line, &current)) {
+            fclose(fp);
+            fprintf(stderr, "AmiGet: malformed Aminet cache\n");
+            return 1;
+        }
+        if (equals_ci(current.name, name)) {
+            *entry = current;
+            fclose(fp);
+            return 0;
+        }
+    }
+
+    fclose(fp);
+    return 2;
+}
+
+int aminet_format_artifact_path(const AminetIndexEntry *entry,
+                                char *out, size_t out_size)
+{
+    size_t needed;
+
+    if (entry == NULL || out == NULL || out_size == 0)
+        return 0;
+
+    needed = strlen(entry->directory) + 1U + strlen(entry->name) + 1U;
+    if (needed > out_size)
+        return 0;
+
+    strcpy(out, entry->directory);
+    strcat(out, "/");
+    strcat(out, entry->name);
+    return 1;
 }
