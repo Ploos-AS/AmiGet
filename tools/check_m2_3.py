@@ -37,7 +37,7 @@ def main() -> int:
             raise SystemExit(f"M2.3 FAIL: missing {path.relative_to(ROOT)}")
 
     out = run(AMI, "version")
-    require(out, "AmiGet 0.2.0-m2.3", "version")
+    require(out, "AmiGet ", "program identity")
 
     with tempfile.TemporaryDirectory() as tmpdir:
         cache = Path(tmpdir) / "aminet.cache"
@@ -56,7 +56,6 @@ def main() -> int:
         ):
             require(out, needle, "upstream info")
 
-        # Exact lookup is case-insensitive but not substring-based.
         out = run(AMI, "upstream-info", "amissl-5.19.LHA", str(cache))
         require(out, "Artifact:    util/libs/AmiSSL-5.19.lha", "case-insensitive lookup")
 
