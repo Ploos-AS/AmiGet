@@ -6,6 +6,8 @@ AmiGet is a package-management layer for classic AmigaOS. Aminet remains an upst
 
 The project should remain useful on low-end classic systems. Features that require substantial host-side infrastructure must not make the basic Amiga client unusable offline or on a 68000-class machine.
 
+ARexx support is a project requirement, not an optional afterthought. The native CLI core must remain usable when RexxMast is not running, while systems with RexxMast should expose a documented `AMIGET` public port. Common commands should include `VERSION`, `STATUS` and `HELP`, with stable return-code conventions shared with other Ploos-AS Amiga tools. Package operations should become scriptable through ARexx as their CLI equivalents mature.
+
 ## M0 — Foundation
 
 Acceptance criteria:
@@ -15,6 +17,7 @@ Acceptance criteria:
 - Source/include/package/profile/docs/tools layout established.
 - Draft package metadata schema documented with an example package.
 - Initial curated profile format represented by an example.
+- ARexx is recorded as a required project interface, while the CLI remains usable without RexxMast.
 - Host-side `tools/check_m0.py` validates the baseline.
 - No claim that downloading/installing is implemented.
 
@@ -63,10 +66,12 @@ Profiles are metadata, not hard-coded installer behaviour.
 
 Add upgrade planning and consistency diagnostics. `doctor` should identify missing dependencies, stale metadata and damaged AmiGet state without silently modifying the system.
 
-## M8 — Integration
+## M8 — ARexx and integration
 
-Add an ARexx interface where practical and hooks for Ploos-AS tools such as AmiGuard/AmiForensics/AmiInternals without making them mandatory dependencies.
+Implement and qualify the required `AMIGET` ARexx port. At minimum expose `VERSION`, `STATUS` and `HELP`, plus appropriate equivalents for mature package operations such as `SEARCH`, `INFO`, `UPDATE`, `INSTALL` and profile handling. Document arguments, results and return codes. RexxMast must remain optional for ordinary CLI operation.
+
+Add optional hooks for Ploos-AS tools such as AmiGuard/AmiForensics/AmiInternals without making them mandatory dependencies.
 
 ## M9 — Release qualification
 
-Qualify supported AmigaOS/CPU profiles under emulation and selected real hardware. Produce reproducible release archives and installation documentation.
+Qualify supported AmigaOS/CPU profiles under emulation and selected real hardware. ARexx qualification is part of the supported runtime matrix when RexxMast is available. Produce reproducible release archives and installation documentation.
