@@ -1,0 +1,11 @@
+format=0
+name=example
+version=0
+summary=M0 example package; not installable
+source=aminet
+aminet_path=util/misc/example.lha
+os_min=2.04
+cpu_min=68000
+archive=lha
+sha256=UNSET
+install_recipe=manual
