@@ -1,7 +1,7 @@
 #ifndef AMIGET_H
 #define AMIGET_H
 
-#define AMIGET_VERSION "0.2.0-m2.2"
+#define AMIGET_VERSION "0.2.0-m2.3"
 #define AMIGET_MAX_LINE 512
 #define AMIGET_MAX_FIELD 256
 #define AMIGET_MAX_PATH 512
@@ -26,5 +26,6 @@ int amiget_search(const char *catalogue_path, const char *term);
 int amiget_search_combined(const char *catalogue_path, const char *cache_path,
                            const char *term, int cache_required);
 int amiget_info(const char *catalogue_path, const char *name);
+int amiget_upstream_info(const char *cache_path, const char *name);
 
 #endif
