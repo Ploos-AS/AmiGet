@@ -1,7 +1,7 @@
 #ifndef AMIGET_H
 #define AMIGET_H
 
-#define AMIGET_VERSION "0.2.0-m2.1"
+#define AMIGET_VERSION "0.2.0-m2.2"
 #define AMIGET_MAX_LINE 512
 #define AMIGET_MAX_FIELD 256
 #define AMIGET_MAX_PATH 512
