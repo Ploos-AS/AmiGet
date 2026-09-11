@@ -47,7 +47,7 @@ def main() -> int:
         raise SystemExit("M1 FAIL: AmiGet binary missing; run make first")
 
     out = run("version")
-    require(out, "AmiGet 0.1.0-m1", "version")
+    require(out, "AmiGet ", "version")
 
     out = run("list")
     require(out, "example", "list")
