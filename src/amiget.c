@@ -317,8 +317,9 @@ static void usage(const char *prog)
             "  %s version\n"
             "  %s list [catalogue]\n"
             "  %s search <term> [catalogue] [--aminet <cache>]\n"
-            "  %s info <package> [catalogue]\n",
-            prog, prog, prog, prog);
+            "  %s info <package> [catalogue]\n"
+            "  %s update <INDEX> [cache]\n",
+            prog, prog, prog, prog, prog);
 }
 
 int main(int argc, char **argv)
@@ -367,6 +368,17 @@ int main(int argc, char **argv)
         }
         catalogue = argc >= 4 ? argv[3] : "packages/catalogue.lst";
         return amiget_info(catalogue, argv[2]);
+    }
+    if (strcmp(argv[1], "update") == 0) {
+        const char *index_path;
+        const char *cache_path;
+        if (argc < 3 || argc > 4) {
+            usage(argv[0]);
+            return 1;
+        }
+        index_path = argv[2];
+        cache_path = argc == 4 ? argv[3] : "cache/aminet.cache";
+        return aminet_update_cache_atomic(index_path, cache_path);
     }
     usage(argv[0]);
     return 1;
