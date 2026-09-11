@@ -14,13 +14,29 @@ import tempfile
 import urllib.error
 import urllib.request
 
-MIRRORS = (
+DEFAULT_MIRRORS = (
     "https://de.aminet.net/aminet/INDEX",
     "https://ftp.fau.de/aminet/INDEX",
     "https://ftp.uni-erlangen.de/aminet/INDEX",
 )
 MAX_BYTES = 16 * 1024 * 1024
-USER_AGENT = "Ploos-AS-AmiGet/0.2-m2"
+USER_AGENT = "Ploos-AS-AmiGet/0.2-m2.2"
+
+
+def load_mirrors(path: Path) -> tuple[str, ...]:
+    if not path.is_file():
+        return DEFAULT_MIRRORS
+    mirrors: list[str] = []
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        if not line.startswith("https://"):
+            raise ValueError(f"unsupported mirror URL: {line}")
+        mirrors.append(line)
+    if not mirrors:
+        raise ValueError("mirror configuration contains no URLs")
+    return tuple(mirrors)
 
 
 def validate(data: bytes) -> None:
@@ -58,9 +74,15 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", default="build/aminet/INDEX")
     parser.add_argument("--url", help="override mirror URL")
+    parser.add_argument("--mirrors", default="config/mirrors.conf")
     args = parser.parse_args()
 
-    urls = (args.url,) if args.url else MIRRORS
+    try:
+        urls = (args.url,) if args.url else load_mirrors(Path(args.mirrors))
+    except ValueError as exc:
+        print(f"mirror configuration: {exc}")
+        return 1
+
     errors: list[str] = []
     for url in urls:
         try:
