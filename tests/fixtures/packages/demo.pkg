@@ -1,0 +1,11 @@
+format=0
+name=demo
+version=1.0
+summary=M4.1 install planning fixture
+source=aminet
+aminet_path=util/misc/demo.lha
+os_min=2.04
+cpu_min=68000
+archive=lha
+sha256=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+install_recipe=demo
