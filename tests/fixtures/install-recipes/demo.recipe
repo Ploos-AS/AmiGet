@@ -1,0 +1,5 @@
+format=1
+recipe=demo
+action=mkdir|SYS:Demo
+action=copy|bin/demo|C:Demo
+action=assign|DEMO|SYS:Demo
